@@ -1,16 +1,29 @@
-import * as React from 'react';
-import { TextField, IStackStyles, Stack, IStackTokens, ITextFieldStyles, Text, IconButton, IButtonStyles, BaseButton, Button, Label, VirtualizedComboBox } from '@fluentui/react';
+import * as React from "react";
+import {
+  TextField,
+  IStackStyles,
+  Stack,
+  IStackTokens,
+  ITextFieldStyles,
+  Text,
+  IconButton,
+  IButtonStyles,
+  BaseButton,
+  Button,
+  Label,
+  VirtualizedComboBox,
+} from "@fluentui/react";
 import { IInputs } from "./generated/ManifestTypes";
-import { initializeIcons } from '@uifabric/icons';
+import { initializeIcons } from "@uifabric/icons";
 initializeIcons();
 
 //#region  Interfaces
 export interface IDurationPickerProps {
-  onDurationChange: any,
-  inputValue: number,
-  maxHours?: number,
-  maxDays?: number,
-  daysLabel: string
+  onDurationChange: any;
+  inputValue: number;
+  maxHours?: number;
+  maxDays?: number;
+  daysLabel: string;
 }
 
 export interface IDurationPickerState {
@@ -20,9 +33,9 @@ export interface IDurationPickerState {
   incrementMinValue: number;
   incrementHrsValue: number;
   incrementDaysValue: number;
-  interval: any,
-  isLongPress: boolean,
-  longPressStartTime: Date | null,
+  interval: any;
+  isLongPress: boolean;
+  longPressStartTime: Date | null;
 }
 
 interface ITime {
@@ -30,18 +43,17 @@ interface ITime {
   hours: number;
   minutes: number;
 }
-//#region 
+//#region
 
 //#region styles
 const buttonStyle: IButtonStyles = {
   root: {
-    width: 35
+    width: 35,
   },
 };
 
 const stackStyles: IStackStyles = {
-  root: {
-  },
+  root: {},
 };
 
 const centerStackStyles: IStackStyles = {
@@ -60,28 +72,26 @@ const numericalSpacingStackTokens: IStackTokens = {
 const narrowTextFieldStyles: Partial<ITextFieldStyles> = {
   fieldGroup: [
     {
-      width: 35
+      width: 35,
     },
-
   ],
-  field: { textAlign: "center" }
+  field: { textAlign: "center" },
 };
 
 const narrowTextFieldStylesDays: Partial<ITextFieldStyles> = {
   fieldGroup: [
     {
-      width: 38
+      width: 39,
     },
-
   ],
-  field: { textAlign: "center" }
+  field: { textAlign: "center" },
 };
 //#endregion
 
 enum Time {
   Days = "days",
   Hours = "hours",
-  Minutes = "minutes"
+  Minutes = "minutes",
 }
 
 const increment = "increment";
@@ -111,8 +121,8 @@ export class DurationPicker extends React.Component<IDurationPickerProps, IDurat
       incrementDaysValue: 1,
       interval: null,
       isLongPress: false,
-      longPressStartTime: null
-    }
+      longPressStartTime: null,
+    };
 
     if (this.props.maxHours) {
       this.maxHours = this.props.maxHours;
@@ -141,7 +151,7 @@ export class DurationPicker extends React.Component<IDurationPickerProps, IDurat
   componentDidUpdate(prevProps: IDurationPickerProps, other: any) {
     if (this.props.inputValue !== prevProps.inputValue) {
       let duration = this.convertMinutes(this.props.inputValue);
-      this.setDays(duration.days)
+      this.setDays(duration.days);
       this.setHours(duration.hours);
       this.setMinutes(duration.minutes);
     }
@@ -149,18 +159,18 @@ export class DurationPicker extends React.Component<IDurationPickerProps, IDurat
 
   /**
    * Converts minutes to object containing days, hours and minutes
-   * @param {number} minutes 
+   * @param {number} minutes
    * @returns {ITime} ITime object representing hours and minutes of total time
    */
   private convertMinutes(minutes: number): ITime {
-    var num = minutes; //5292 min
-    var days = (num / 1440); //3.675 days
-    var rdays = Math.floor(days); //3 days
-    var hours = (minutes - (rdays * 1440)) / 60; //16.2 hours
-    var rhours = Math.floor(hours); //16 hours
-    var minutes = (hours - rhours) * 60; //12 minutes
+    var num = minutes;
+    var days = num / 1440;
+    var rdays = Math.floor(days);
+    var hours = (minutes - rdays * 1440) / 60;
+    var rhours = Math.floor(hours);
+    var minutes = (hours - rhours) * 60;
     var rminutes = Math.round(minutes);
-    return { days: rdays, hours: rhours, minutes: rminutes }
+    return { days: rdays, hours: rhours, minutes: rminutes };
   }
 
   /**
@@ -170,10 +180,10 @@ export class DurationPicker extends React.Component<IDurationPickerProps, IDurat
     this.increment(target);
 
     if (!this.state.isLongPress) {
-      this.setState({ longPressStartTime: new Date(), isLongPress: true })
+      this.setState({ longPressStartTime: new Date(), isLongPress: true });
     }
 
-    let myInterval = setInterval(() => this.increment(target), this.mouseDownDelay)
+    let myInterval = setInterval(() => this.increment(target), this.mouseDownDelay);
     this.setState({ interval: myInterval });
   }
 
@@ -190,11 +200,14 @@ export class DurationPicker extends React.Component<IDurationPickerProps, IDurat
     switch (target) {
       case Time.Minutes:
         if (this.state.hours < this.maxHours && this.state.days < this.maxDays) {
-
           let incrementValue: number = 1;
 
-          if ((this.state.longPressStartTime !== null && this.state.longPressStartTime !== undefined)
-            && (new Date().getTime() - (this.state.longPressStartTime as Date).getTime()) > this.mouseHoldVarianceDelay && this.state.minutes % 5 === 0) {
+          if (
+            this.state.longPressStartTime !== null &&
+            this.state.longPressStartTime !== undefined &&
+            new Date().getTime() - (this.state.longPressStartTime as Date).getTime() > this.mouseHoldVarianceDelay &&
+            this.state.minutes % 5 === 0
+          ) {
             incrementValue = 5;
           }
 
@@ -211,43 +224,37 @@ export class DurationPicker extends React.Component<IDurationPickerProps, IDurat
           let newValue = this.state.hours + this.state.incrementHrsValue;
           this.setHours(newValue);
           if (newValue === this.maxHours) {
-            // this.setMinutes(0);
-            // this.setDays(this.state.days + 1);
           }
         } else {
-          // this.setMinutes(0);
-          if(this.state.days < this.maxDays){
+          if (this.state.days < this.maxDays) {
             this.setDays(this.state.days + 1);
           }
         }
         break;
       case Time.Days:
-          if (this.state.days < this.maxDays) {
-            let newValue = this.state.days + this.state.incrementDaysValue;
-            this.setDays(newValue);
-            if (newValue === this.maxDays) {
-              this.setHours(0);
-              this.setMinutes(0);
-            }
-          } else {
-            // this.setHours(0);
-            // this.setMinutes(0);
+        if (this.state.days < this.maxDays) {
+          let newValue = this.state.days + this.state.incrementDaysValue;
+          this.setDays(newValue);
+          if (newValue === this.maxDays) {
+            this.setHours(0);
+            this.setMinutes(0);
           }
-      break;
+        }
+        break;
     }
   }
 
   /**
-  * @param target  "days", "hours" or "minutes" as string
-  */
+   * @param target  "days", "hours" or "minutes" as string
+   */
   private startContinuousDecrement(target: string): void {
     this.decrement(target);
 
     if (!this.state.isLongPress) {
-      this.setState({ longPressStartTime: new Date(), isLongPress: true })
+      this.setState({ longPressStartTime: new Date(), isLongPress: true });
     }
 
-    let myInterval = setInterval(() => this.decrement(target), this.mouseDownDelay)
+    let myInterval = setInterval(() => this.decrement(target), this.mouseDownDelay);
     this.setState({ interval: myInterval });
   }
 
@@ -264,33 +271,40 @@ export class DurationPicker extends React.Component<IDurationPickerProps, IDurat
   private decrement(target: string): void {
     switch (target) {
       case Time.Minutes:
-
-        let decrementValue: number = 1
-        if ((this.state.longPressStartTime !== null && this.state.longPressStartTime !== undefined) && (new Date().getTime() - (this.state.longPressStartTime as Date).getTime()) > this.mouseHoldVarianceDelay && this.state.minutes % 5 === 0) {
+        let decrementValue: number = 1;
+        if (
+          this.state.longPressStartTime !== null &&
+          this.state.longPressStartTime !== undefined &&
+          new Date().getTime() - (this.state.longPressStartTime as Date).getTime() > this.mouseHoldVarianceDelay &&
+          this.state.minutes % 5 === 0
+        ) {
           decrementValue = 5;
         }
 
         if (this.state.minutes > 0) {
           this.setMinutes(this.state.minutes - decrementValue);
         } else if (this.state.hours > 0) {
-          this.setMinutes(60 - decrementValue);
-          this.setHours(this.state.hours - 1);
+          this.setMinutes(this.maxMins - this.state.incrementMinValue);
+          this.setHours(this.state.hours - this.state.incrementHrsValue);
+        }
+        else if(this.state.days > 0 && this.state.hours <= 0){
+          console.log("1");
+          this.setMinutes(this.maxMins - decrementValue);
+          this.setDays(this.state.hours - this.state.incrementDaysValue)
         }
         break;
       case Time.Hours:
-        if (this.state.hours > 0){
+        if (this.state.hours > 0) {
           this.setHours(this.state.hours - this.state.incrementHrsValue);
-        }
-        else{
-          if(this.state.days > 0 ){
+        } else {
+          if (this.state.days > 0) {
             this.setHours(this.maxHours - 1);
             this.setDays(this.state.days - this.state.incrementDaysValue);
           }
         }
         break;
       case Time.Days:
-        if (this.state.days > 0)
-          this.setDays(this.state.days - this.state.incrementDaysValue);
+        if (this.state.days > 0) this.setDays(this.state.days - this.state.incrementDaysValue);
         break;
     }
   }
@@ -308,25 +322,30 @@ export class DurationPicker extends React.Component<IDurationPickerProps, IDurat
   }
 
   /**
-   * 
-   * @param event 
+   *
+   * @param event
    * @param type "increment" or "decrement" as string
    * @param target "days", "hours" or "minutes" as string
    */
-  private onKeyDown(event: React.KeyboardEvent<HTMLAnchorElement | HTMLButtonElement | HTMLDivElement | BaseButton | HTMLSpanElement>, type: "increment" | "decrement", target: string): void {
+  private onKeyDown(
+    event: React.KeyboardEvent<HTMLAnchorElement | HTMLButtonElement | HTMLDivElement | BaseButton | HTMLSpanElement>,
+    type: "increment" | "decrement",
+    target: string
+  ): void {
     // " " - represents spacebar - https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent/key/Key_Values
     if ([" ", "Spacebar", "Enter"].includes(event.key)) {
-
       if (this.isKeyDownDelay) return;
 
       this.isKeyDownDelay = true;
       let _this = this;
 
       if (!this.state.isLongPress) {
-        this.setState({ longPressStartTime: new Date(), isLongPress: true })
+        this.setState({ longPressStartTime: new Date(), isLongPress: true });
       }
 
-      setTimeout(function () { _this.isKeyDownDelay = false; }, this.keyDownDelay);
+      setTimeout(function () {
+        _this.isKeyDownDelay = false;
+      }, this.keyDownDelay);
 
       switch (type) {
         case increment:
@@ -339,7 +358,9 @@ export class DurationPicker extends React.Component<IDurationPickerProps, IDurat
     }
   }
 
-  private onKeyUp(event: React.KeyboardEvent<HTMLAnchorElement | HTMLButtonElement | HTMLDivElement | BaseButton | HTMLSpanElement>) {
+  private onKeyUp(
+    event: React.KeyboardEvent<HTMLAnchorElement | HTMLButtonElement | HTMLDivElement | BaseButton | HTMLSpanElement>
+  ) {
     // " " - represents spacebar - https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent/key/Key_Values
     if ([" ", "Spacebar", "Enter"].includes(event.key)) {
       this.setState({ isLongPress: false, longPressStartTime: null });
@@ -355,8 +376,8 @@ export class DurationPicker extends React.Component<IDurationPickerProps, IDurat
 
   /**
    * Handle manual input in text field
-   * @param event 
-   * @param target "days" | "hours" | "minutes" 
+   * @param event
+   * @param target "days" | "hours" | "minutes"
    */
   private onTextChange(event: any, target: "days" | "hours" | "minutes"): void {
     let parsedValue: number = 0;
@@ -369,16 +390,13 @@ export class DurationPicker extends React.Component<IDurationPickerProps, IDurat
 
     switch (target) {
       case Time.Days:
-
         if (parsedValue >= this.maxDays) {
           parsedValue = this.maxDays;
-          // this.setMinutes(0);
         }
 
         this.setDays(parsedValue);
         break;
       case Time.Hours:
-
         if (parsedValue >= this.maxHours) {
           parsedValue = this.maxHours;
           this.setMinutes(0);
@@ -387,15 +405,9 @@ export class DurationPicker extends React.Component<IDurationPickerProps, IDurat
         this.setHours(parsedValue);
         break;
       case Time.Minutes:
+        if (parsedValue > this.maxMins) parsedValue = this.maxMins;
 
-        if (parsedValue > this.maxMins)
-          parsedValue = this.maxMins
-
-        if (this.state.hours === this.maxHours)
-          parsedValue = 0
-
-        // if (this.state.days === this.maxDays)
-        //   parsedValue = 0  
+        if (this.state.hours === this.maxHours) parsedValue = 0;
 
         this.setMinutes(parsedValue);
         break;
@@ -403,108 +415,158 @@ export class DurationPicker extends React.Component<IDurationPickerProps, IDurat
   }
 
   private setDaysText(): string {
-    let days = this.state.days < 10 && this.state.days > 0 ? `0${this.state.days.toString()}` : this.state.days <= 0 ? "" : this.state.days.toString()
-    return days
+    let days =
+      this.state.days < 10 && this.state.days > 0
+        ? `0${this.state.days.toString()}`
+        : this.state.days <= 0
+        ? ""
+        : this.state.days.toString();
+    return days;
   }
 
   private setHoursText(): string {
-    // let hours = this.state.hours < 10 && this.state.hours > 0 ? `0${this.state.hours.toString()}` : this.state.hours <= 0 ? "" : this.state.hours.toString()
+    let hours: string = "";
 
-    let hours: string = '';
-
-    if(this.state.hours < 10 && this.state.hours > 0){
-      hours = `0${this.state.hours.toString()}`
-    }
-    else if(this.state.hours <= 0 &&this.state.days > 0){
+    if (this.state.hours < 10 && this.state.hours > 0) {
       hours = `0${this.state.hours.toString()}`;
-    }
-    else if(this.state.hours <= 0){
+    } else if (this.state.hours <= 0 && this.state.days > 0) {
+      hours = `0${this.state.hours.toString()}`;
+    } else if (this.state.hours <= 0) {
       hours = "";
-    }
-    else{
-      hours = this.state.hours.toString()
+    } else {
+      hours = this.state.hours.toString();
     }
 
-    return hours
+    return hours;
   }
 
   private setMinutesText(): string {
-    let minutes: string = ''
+    let minutes: string = "";
 
     if (this.state.minutes < 10 && this.state.minutes > 0) {
       minutes = `0${this.state.minutes.toString()}`;
-    } else if (this.state.minutes <= 0 && this.state.hours > 0) {
+    } else if ((this.state.minutes <= 0 && this.state.hours > 0) || (this.state.minutes <= 0 && this.state.days > 0)) {
       minutes = `0${this.state.minutes.toString()}`;
+      console.log("2");
     } else if (this.state.minutes <= 0) {
-      minutes = ""
+      minutes = "";
     } else {
-      minutes = this.state.minutes.toString()
+      minutes = this.state.minutes.toString();
     }
 
-    return minutes
+    return minutes;
   }
 
   render() {
     return (
       <Stack horizontal styles={stackStyles} disableShrink tokens={numericalSpacingStackTokens}>
         <Stack styles={stackStyles}>
-          <IconButton aria-label="Increment Days" id={Time.Days} iconProps={{ iconName: upIcon }} styles={buttonStyle}
+          <IconButton
+            aria-label="Increment Days"
+            id={Time.Days}
+            iconProps={{ iconName: upIcon }}
+            styles={buttonStyle}
             onMouseDown={() => this.startContinuousIncrement(Time.Days)}
             onMouseUp={() => this.stopContinuousIncrement()}
             onMouseOut={() => this.stopContinuousDecrement()}
             onKeyDown={(e: React.KeyboardEvent<any>) => this.onKeyDown(e, increment, Time.Days)}
-            onKeyUp={this.onKeyUp} />
-          <TextField styles={narrowTextFieldStylesDays} value={this.setDaysText()}
-            onChange={(e: any) => this.onTextChange(e, Time.Days)} borderless placeholder="--" />
-          <IconButton aria-label="Decrement Days" id={Time.Days} iconProps={{ iconName: downIcon }} styles={buttonStyle}
-            onMouseDown={() => { this.startContinuousDecrement(Time.Days) }}
+            onKeyUp={this.onKeyUp}
+          />
+          <TextField
+            styles={narrowTextFieldStylesDays}
+            value={this.setDaysText()}
+            onChange={(e: any) => this.onTextChange(e, Time.Days)}
+            borderless
+            placeholder="--"
+          />
+          <IconButton
+            aria-label="Decrement Days"
+            id={Time.Days}
+            iconProps={{ iconName: downIcon }}
+            styles={buttonStyle}
+            onMouseDown={() => {
+              this.startContinuousDecrement(Time.Days);
+            }}
             onMouseUp={() => this.stopContinuousDecrement()}
             onMouseOut={() => this.stopContinuousDecrement()}
             onKeyDown={(e: React.KeyboardEvent<any>) => this.onKeyDown(e, decrement, Time.Days)}
-            onKeyUp={this.onKeyUp} />
+            onKeyUp={this.onKeyUp}
+          />
           <Text> {this.props.daysLabel} </Text>
         </Stack>
         <Stack horizontalAlign="center" styles={centerStackStyles}>
           <span>:</span>
         </Stack>
         <Stack styles={stackStyles}>
-          <IconButton aria-label="Increment Hours" id={Time.Hours} iconProps={{ iconName: upIcon }} styles={buttonStyle}
+          <IconButton
+            aria-label="Increment Hours"
+            id={Time.Hours}
+            iconProps={{ iconName: upIcon }}
+            styles={buttonStyle}
             onMouseDown={() => this.startContinuousIncrement(Time.Hours)}
             onMouseUp={() => this.stopContinuousIncrement()}
             onMouseOut={() => this.stopContinuousDecrement()}
             onKeyDown={(e: React.KeyboardEvent<any>) => this.onKeyDown(e, increment, Time.Hours)}
-            onKeyUp={this.onKeyUp} />
-          <TextField styles={narrowTextFieldStyles} value={this.setHoursText()}
-            onChange={(e: any) => this.onTextChange(e, Time.Hours)} borderless placeholder="--" />
-          <IconButton aria-label="Decrement Hours" id={Time.Hours} iconProps={{ iconName: downIcon }} styles={buttonStyle}
-            onMouseDown={() => { this.startContinuousDecrement(Time.Hours) }}
+            onKeyUp={this.onKeyUp}
+          />
+          <TextField
+            styles={narrowTextFieldStyles}
+            value={this.setHoursText()}
+            onChange={(e: any) => this.onTextChange(e, Time.Hours)}
+            borderless
+            placeholder="--"
+          />
+          <IconButton
+            aria-label="Decrement Hours"
+            id={Time.Hours}
+            iconProps={{ iconName: downIcon }}
+            styles={buttonStyle}
+            onMouseDown={() => {
+              this.startContinuousDecrement(Time.Hours);
+            }}
             onMouseUp={() => this.stopContinuousDecrement()}
             onMouseOut={() => this.stopContinuousDecrement()}
             onKeyDown={(e: React.KeyboardEvent<any>) => this.onKeyDown(e, decrement, Time.Hours)}
-            onKeyUp={this.onKeyUp} />
+            onKeyUp={this.onKeyUp}
+          />
           <Text> HR(S) </Text>
         </Stack>
         <Stack horizontalAlign="center" styles={centerStackStyles}>
           <span>:</span>
         </Stack>
         <Stack styles={stackStyles}>
-          <IconButton aria-label="Increment Minutes" id={Time.Minutes} iconProps={{ iconName: upIcon }} styles={buttonStyle}
+          <IconButton
+            aria-label="Increment Minutes"
+            id={Time.Minutes}
+            iconProps={{ iconName: upIcon }}
+            styles={buttonStyle}
             onMouseDown={() => this.startContinuousIncrement(Time.Minutes)}
             onMouseUp={() => this.stopContinuousIncrement()}
             onMouseOut={() => this.stopContinuousDecrement()}
             onKeyDown={(e: React.KeyboardEvent<any>) => this.onKeyDown(e, increment, Time.Minutes)}
-            onKeyUp={this.onKeyUp} />
-          <TextField styles={narrowTextFieldStyles} value={this.setMinutesText()}
-            onChange={(e: any) => this.onTextChange(e, Time.Minutes)} borderless placeholder="--" />
-          <IconButton aria-label="Decrement Hours" id={Time.Minutes} iconProps={{ iconName: downIcon }} styles={buttonStyle}
+            onKeyUp={this.onKeyUp}
+          />
+          <TextField
+            styles={narrowTextFieldStyles}
+            value={this.setMinutesText()}
+            onChange={(e: any) => this.onTextChange(e, Time.Minutes)}
+            borderless
+            placeholder="--"
+          />
+          <IconButton
+            aria-label="Decrement Hours"
+            id={Time.Minutes}
+            iconProps={{ iconName: downIcon }}
+            styles={buttonStyle}
             onMouseDown={() => this.startContinuousDecrement(Time.Minutes)}
             onMouseUp={() => this.stopContinuousDecrement()}
             onMouseOut={() => this.stopContinuousDecrement()}
             onKeyDown={(e: React.KeyboardEvent<any>) => this.onKeyDown(e, decrement, Time.Minutes)}
-            onKeyUp={this.onKeyUp} />
+            onKeyUp={this.onKeyUp}
+          />
           <Text> MIN(S) </Text>
         </Stack>
       </Stack>
-    )
+    );
   }
 }
