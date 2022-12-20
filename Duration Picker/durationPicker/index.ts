@@ -12,7 +12,8 @@ export class DuractionPicker implements ComponentFramework.StandardControl<IInpu
 
 	private props: IDurationPickerProps = {
 		onDurationChange: this.handleDurationUpdate.bind(this),
-		inputValue: this._input ? this._input : 0
+		inputValue: this._input ? this._input : 0,
+		daysLabel: ""
 	}
 
 	/**
@@ -40,6 +41,7 @@ export class DuractionPicker implements ComponentFramework.StandardControl<IInpu
 			this._input = context.parameters.duration.raw || 0;
 			this.props.inputValue = this._input ? this._input : 0;
 		}
+		this.props.daysLabel = context.resources.getString("DaysLabel");
 	}
 
 	/**
