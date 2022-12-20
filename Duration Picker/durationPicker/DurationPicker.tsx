@@ -9,9 +9,6 @@ import {
   IconButton,
   IButtonStyles,
   BaseButton,
-  Button,
-  Label,
-  VirtualizedComboBox,
 } from "@fluentui/react";
 import { IInputs } from "./generated/ManifestTypes";
 import { initializeIcons } from "@uifabric/icons";
@@ -162,14 +159,14 @@ export class DurationPicker extends React.Component<IDurationPickerProps, IDurat
    * @param {number} minutes
    * @returns {ITime} ITime object representing hours and minutes of total time
    */
-  private convertMinutes(minutes: number): ITime {
-    var num = minutes;
-    var days = num / 1440;
-    var rdays = Math.floor(days);
-    var hours = (minutes - rdays * 1440) / 60;
-    var rhours = Math.floor(hours);
-    var minutes = (hours - rhours) * 60;
-    var rminutes = Math.round(minutes);
+  private convertMinutes(min: number): ITime {
+    const num = min;
+    const days = num / 1440;
+    const rdays = Math.floor(days);
+    const hours = (min - rdays * 1440) / 60;
+    const rhours = Math.floor(hours);
+    const minutes = (hours - rhours) * 60;
+    const rminutes = Math.round(minutes);
     return { days: rdays, hours: rhours, minutes: rminutes };
   }
 
@@ -205,7 +202,7 @@ export class DurationPicker extends React.Component<IDurationPickerProps, IDurat
           if (
             this.state.longPressStartTime !== null &&
             this.state.longPressStartTime !== undefined &&
-            new Date().getTime() - (this.state.longPressStartTime as Date).getTime() > this.mouseHoldVarianceDelay &&
+            new Date().getTime() - (this.state.longPressStartTime).getTime() > this.mouseHoldVarianceDelay &&
             this.state.minutes % 5 === 0
           ) {
             incrementValue = 5;
@@ -223,8 +220,6 @@ export class DurationPicker extends React.Component<IDurationPickerProps, IDurat
         if (this.state.hours < this.maxHours && this.state.days < this.maxDays) {
           let newValue = this.state.hours + this.state.incrementHrsValue;
           this.setHours(newValue);
-          if (newValue === this.maxHours) {
-          }
         } else {
           if (this.state.days < this.maxDays) {
             this.setDays(this.state.days + 1);
@@ -275,7 +270,7 @@ export class DurationPicker extends React.Component<IDurationPickerProps, IDurat
         if (
           this.state.longPressStartTime !== null &&
           this.state.longPressStartTime !== undefined &&
-          new Date().getTime() - (this.state.longPressStartTime as Date).getTime() > this.mouseHoldVarianceDelay &&
+          new Date().getTime() - (this.state.longPressStartTime).getTime() > this.mouseHoldVarianceDelay &&
           this.state.minutes % 5 === 0
         ) {
           decrementValue = 5;
@@ -288,7 +283,6 @@ export class DurationPicker extends React.Component<IDurationPickerProps, IDurat
           this.setHours(this.state.hours - this.state.incrementHrsValue);
         }
         else if(this.state.days > 0 && this.state.hours <= 0){
-          console.log("1");
           this.setMinutes(this.maxMins - decrementValue);
           this.setDays(this.state.hours - this.state.incrementDaysValue)
         }
@@ -447,7 +441,6 @@ export class DurationPicker extends React.Component<IDurationPickerProps, IDurat
       minutes = `0${this.state.minutes.toString()}`;
     } else if ((this.state.minutes <= 0 && this.state.hours > 0) || (this.state.minutes <= 0 && this.state.days > 0)) {
       minutes = `0${this.state.minutes.toString()}`;
-      console.log("2");
     } else if (this.state.minutes <= 0) {
       minutes = "";
     } else {
